@@ -4,6 +4,7 @@ import (
 	"github.com/gookit/gcli/v3"
 	"github.com/gookit/goutil/cliutil"
 	"github.com/inherelab/goenv"
+	"github.com/inherelab/goenv/internal"
 )
 
 // App instance
@@ -27,7 +28,7 @@ func Run() {
 func createApp() {
 	App = gcli.NewApp(func(app *gcli.App) {
 		app.Version = goenv.Version
-		app.Desc = "this is my cli application"
+		app.Desc = "Go multi version env manager"
 		app.On(gcli.EvtAppInit, func(data ...interface{}) bool {
 			// do something...
 			// fmt.Println("init app")
@@ -46,15 +47,25 @@ func createApp() {
 
 	// disable global options
 	gcli.GOpts().SetDisable()
+
+	// App.GOptsBinder = func(gf *gcli.Flags) {
+	// 	gf.BoolOpt()
+	// }
 }
 
 func addCommands() {
 	App.Add(
 		InfoCmd,
 		ShellCmd,
+		UpdateCmd,
 		InstallCmd,
 		UninstallCmd,
 		SwitchCmd,
 		ListCmd,
 	)
+}
+
+// MakeAdaptor instance
+func makeAdaptor() (internal.Adaptor, error) {
+	return internal.NewEnvManager(goenv.Cfg.Mode).MakeAdaptor()
 }

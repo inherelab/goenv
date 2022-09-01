@@ -2,8 +2,11 @@ package internal
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/gookit/color"
 	"github.com/gookit/gcli/v3/interact"
+	"github.com/gookit/goutil/arrutil"
 	"github.com/gookit/goutil/cliutil"
 	"github.com/gookit/goutil/errorx"
 	"github.com/gookit/goutil/fsutil"
@@ -15,21 +18,66 @@ type BrewAdaptor struct {
 	opts *CallOpts
 }
 
+func NewBrewAdaptor() *BrewAdaptor {
+	return &BrewAdaptor{
+		opts: newDefaultBrewOpts(),
+	}
+}
+
+func newDefaultBrewOpts() *CallOpts {
+	return &CallOpts{
+		LibDir: "/usr/local/opt",
+	}
+}
+
 // WithOptions data
 func (a *BrewAdaptor) WithOptions(opts *CallOpts) Adaptor {
 	a.opts = opts
 	return a
 }
 
-func (a *BrewAdaptor) goInstallPath(ver string) string {
-	return "/usr/local/opt/go@" + ver
+// List installed version
+func (a *BrewAdaptor) List() error {
+	info, err := sysutil.OsGoInfo()
+	if err != nil {
+		return err
+	}
+
+	str, err := sysutil.ShellExec("ls /usr/local/opt | grep go@")
+	if err != nil {
+		return errorx.Wrap(err, "find local go error")
+	}
+
+	lines := strings.Split(strings.TrimSpace(str), "\n")
+
+	prefix := "go@"
+	versions := arrutil.StringsMap(lines, func(s string) string {
+		ver := strings.TrimPrefix(s, prefix)
+
+		indent := "  "
+		if strings.HasPrefix(info.Version, ver) {
+			indent = color.Info.Sprint("* ")
+		}
+		return indent + ver
+	})
+
+	color.Infoln("Installed Versions:")
+	fmt.Println(strings.Join(versions, "\n"))
+	return nil
+}
+
+func (a *BrewAdaptor) fmtVerAndLibPath(ver string) (string, string) {
+	// 1.16.5 -> 1.16
+	ver = formatVersion(ver)
+
+	return ver, "/usr/local/opt/go@" + ver
 }
 
 // Switch go to given version
 func (a *BrewAdaptor) Switch(ver string) error {
-	insPath := a.goInstallPath(ver)
+	ver, insPath := a.fmtVerAndLibPath(ver)
 	if !fsutil.PathExists(insPath) {
-		return errorx.Rawf("not found Go %s on %s", ver, insPath)
+		return errorx.Rawf("not found Go %s on %s", ver, "/usr/local/opt")
 	}
 
 	info, err := sysutil.OsGoInfo()
@@ -37,8 +85,12 @@ func (a *BrewAdaptor) Switch(ver string) error {
 		return err
 	}
 
-	old := info.Version
-	cliutil.Infoln("Current Go version is", old)
+	old := formatVersion(info.Version)
+	if old == ver {
+		return errorx.Rawf("The current Go version is already %s", ver)
+	}
+
+	cliutil.Infoln("Current Go version is", info.Version)
 	if interact.Unconfirmed("Ensure switch to "+ver, a.opts.Yes) {
 		cliutil.Infoln("Bye, Quit")
 		return nil
@@ -46,7 +98,7 @@ func (a *BrewAdaptor) Switch(ver string) error {
 
 	var line string
 
-	cmdline := "brew unlink go"
+	cmdline := "brew unlink go@" + old
 	cliutil.Magentaln("Unbinding links for go:", cmdline)
 	line, err = cliutil.ExecLine(cmdline)
 	if err != nil {
@@ -62,18 +114,18 @@ func (a *BrewAdaptor) Switch(ver string) error {
 	}
 	fmt.Println(line)
 
-	cliutil.Successln("Switch successful, please reload shell")
-	return nil
+	cliutil.Infoln("Switch successful!")
+	return sysutil.NewCmd("go", "version").OutputToStd().Run()
 }
 
 // Install go by given version
 func (a *BrewAdaptor) Install(ver string) error {
-	insPath := a.goInstallPath(ver)
+	ver, insPath := a.fmtVerAndLibPath(ver)
 	if fsutil.PathExists(insPath) {
 		return errorx.Rawf("go %s has been installed on %s", ver, insPath)
 	}
 
-	cliutil.Magentaln("Installing go ", ver)
+	cliutil.Magentaln("Installing go", ver)
 
 	c := sysutil.NewCmd("brew", "install")
 	c.WithArgf("go@%s", ver)
@@ -87,13 +139,13 @@ func (a *BrewAdaptor) Install(ver string) error {
 
 // Update go by given version
 func (a *BrewAdaptor) Update(ver string) error {
-	insPath := a.goInstallPath(ver)
+	ver, insPath := a.fmtVerAndLibPath(ver)
 	if !fsutil.PathExists(insPath) {
-		cliutil.Infoln("the go", ver, "not found, will be install")
+		cliutil.Infoln("TIP: the go", ver, "not found, will be install")
 		return a.Install(ver)
 	}
 
-	cliutil.Magentaln("Updating go ", ver)
+	cliutil.Magentaln("Updating go", ver)
 
 	c := sysutil.NewCmd("brew", "upgrade")
 	c.WithArgf("go@%s", ver)
@@ -107,12 +159,12 @@ func (a *BrewAdaptor) Update(ver string) error {
 
 // Uninstall go by given version
 func (a *BrewAdaptor) Uninstall(ver string) error {
-	insPath := a.goInstallPath(ver)
+	ver, insPath := a.fmtVerAndLibPath(ver)
 	if !fsutil.PathExists(insPath) {
 		return errorx.Rawf("not found Go %s on %s", ver, insPath)
 	}
 
-	cliutil.Magentaln("Uninstalling go ", ver)
+	cliutil.Magentaln("Uninstalling go", ver)
 
 	c := sysutil.NewCmd("brew", "uninstall")
 	c.WithArgf("go@%s", ver)
@@ -122,4 +174,14 @@ func (a *BrewAdaptor) Uninstall(ver string) error {
 	}
 
 	return c.Run()
+}
+
+func formatVersion(ver string) string {
+	// 1.16.5 -> 1.16
+	ss := strings.Split(ver, ".")
+	if len(ss) > 2 {
+		ver = strings.Join(ss[:2], ".")
+	}
+
+	return ver
 }

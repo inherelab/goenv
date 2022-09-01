@@ -6,7 +6,7 @@
 [![GoDoc](https://godoc.org/github.com/gookit/gcli?status.svg)](https://pkg.go.dev/github.com/gookit/gcli/v3)
 [![Go Report Card](https://goreportcard.com/badge/github.com/gookit/gcli)](https://goreportcard.com/report/github.com/gookit/gcli)
 
-{{ .TplCtx.RepoDesc }}
+Go multi version env manager
 
 - features TODO
 
