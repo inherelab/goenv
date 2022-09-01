@@ -1,4 +1,4 @@
-# {{ .TplCtx.RepoName }}
+# GoEnv
 
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/gookit/gcli?style=flat-square)
 [![Unit-Tests](https://github.com/gookit/gcli/actions/workflows/go.yml/badge.svg)](https://github.com/gookit/gcli/actions/workflows/go.yml)
@@ -15,12 +15,11 @@
 ## Install
 
 ```shell
-go get github.com/{{ .TplCtx.RepoPath }}
+go get github.com/inherelab/goenv
 ```
 
 ## Usage
 
-```go
-// ...
+```bash
+go run ./cmd/goenv
 ```
-
