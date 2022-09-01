@@ -15,8 +15,8 @@ const (
 )
 
 var defaultFile = "~/.config/goenv/goenv.yml"
-var Version = "1.0.1"
 var ConfFile = envutil.Getenv("GOENV_CONF_FILE", defaultFile)
+var Version = "0.0.1"
 
 var CfgMgr *config.Config
 
@@ -39,10 +39,12 @@ type appConf struct {
 	InstallDir string `json:"install_dir" default:"/usr/local/go"`
 }
 
+// IsBrewMode check
 func (c *appConf) IsBrewMode() bool {
 	return c.Mode == ModeBrew
 }
 
+// IsGoEnvMode check
 func (c *appConf) IsGoEnvMode() bool {
 	return c.Mode == ModeGoEnv
 }
@@ -81,6 +83,6 @@ func loadConfig() error {
 		config.WithTagName("json"),
 	).WithDriver(yamlv3.Driver)
 
-	cliutil.Infoln("load goenv config from", ConfFile)
+	// cliutil.Infoln("load goenv config from", realPath)
 	return CfgMgr.LoadFiles(realPath)
 }

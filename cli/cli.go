@@ -53,6 +53,7 @@ func addCommands() {
 		InfoCmd,
 		ShellCmd,
 		InstallCmd,
+		UninstallCmd,
 		SwitchCmd,
 		ListCmd,
 	)

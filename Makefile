@@ -32,8 +32,8 @@ help:
 ##Available Commands:
 
 ins2bin: ## Install to GOPATH/bin
-	go build $(BUILD_FLAGS) -o $(GOPATH)/cmd/goenv $(MAIN_SRC_FILE)
-	chmod +x $(GOPATH)/cmd/goenv
+	go build $(BUILD_FLAGS) -o $(GOPATH)/bin/goenv $(MAIN_SRC_FILE)
+	chmod +x $(GOPATH)/bin/goenv
 
 build-all:linux arm win darwin ## Build for Linux,ARM,OSX,Windows
 
