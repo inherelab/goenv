@@ -77,6 +77,10 @@ func (a *BrewAdaptor) fmtVerAndLibPath(ver string) (string, string) {
 func (a *BrewAdaptor) Switch(ver string) error {
 	ver, insPath := a.fmtVerAndLibPath(ver)
 	if !fsutil.PathExists(insPath) {
+		if interact.Confirm(fmt.Sprintf("Not found go%s. Install now?", ver), true) {
+			return a.Install(ver)
+		}
+
 		return errorx.Rawf("not found Go %s on %s", ver, "/usr/local/opt")
 	}
 
@@ -96,26 +100,24 @@ func (a *BrewAdaptor) Switch(ver string) error {
 		return nil
 	}
 
-	var line string
-
-	cmdline := "brew unlink go@" + old
-	cliutil.Magentaln("Unbinding links for go:", cmdline)
-	line, err = cliutil.ExecLine(cmdline)
+	// cmdline = "brew unlink go@" + old
+	cmdArgs := arrutil.Strings{"brew", "unlink", "go@" + old}
+	cliutil.Magentaln("Unbinding links for go:", cmdArgs.Join(" "))
+	err = sysutil.FlushExec(cmdArgs[0], cmdArgs[1:]...)
 	if err != nil {
 		return err
 	}
-	fmt.Println(line)
 
-	cmdline = "brew link go@" + ver
-	cliutil.Magentaln("Binding links for go:", cmdline)
-	line, err = cliutil.ExecLine(cmdline)
+	// "brew link go@" + ver
+	cmdArgs = arrutil.Strings{"brew", "link", "go@" + ver}
+	cliutil.Magentaln("Binding links for go:", cmdArgs.Join(" "))
+	err = sysutil.FlushExec(cmdArgs[0], cmdArgs[1:]...)
 	if err != nil {
 		return err
 	}
-	fmt.Println(line)
 
 	cliutil.Infoln("Switch successful!")
-	return sysutil.NewCmd("go", "version").OutputToStd().Run()
+	return sysutil.NewCmd("go", "version").FlushRun()
 }
 
 // Install go by given version
@@ -129,12 +131,11 @@ func (a *BrewAdaptor) Install(ver string) error {
 
 	c := sysutil.NewCmd("brew", "install")
 	c.WithArgf("go@%s", ver)
-	c.OutputToStd()
-	c.BeforeExec = func(c *sysutil.Cmd) {
+	c.RunBefore = func(c *cmdr.Cmd) {
 		cliutil.Yellowln(">", c.Cmdline())
 	}
 
-	return c.Run()
+	return c.FlushRun()
 }
 
 // Update go by given version
@@ -150,7 +151,7 @@ func (a *BrewAdaptor) Update(ver string) error {
 	c := sysutil.NewCmd("brew", "upgrade")
 	c.WithArgf("go@%s", ver)
 	c.OutputToStd()
-	c.BeforeExec = func(c *sysutil.Cmd) {
+	c.RunBefore = func(c *cmdr.Cmd) {
 		cliutil.Yellowln(">", c.Cmdline())
 	}
 
@@ -169,7 +170,7 @@ func (a *BrewAdaptor) Uninstall(ver string) error {
 	c := sysutil.NewCmd("brew", "uninstall")
 	c.WithArgf("go@%s", ver)
 	c.OutputToStd()
-	c.BeforeExec = func(c *sysutil.Cmd) {
+	c.RunBefore = func(c *cmdr.Cmd) {
 		cliutil.Yellowln(">", c.Cmdline())
 	}
 

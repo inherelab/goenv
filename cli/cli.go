@@ -67,5 +67,5 @@ func addCommands() {
 
 // MakeAdaptor instance
 func makeAdaptor() (internal.Adaptor, error) {
-	return internal.NewEnvManager(goenv.Cfg.Mode).MakeAdaptor()
+	return internal.MakeAdaptor(goenv.Cfg.Mode)
 }

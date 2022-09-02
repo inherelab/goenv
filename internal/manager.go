@@ -2,31 +2,38 @@ package internal
 
 import (
 	"github.com/gookit/goutil/errorx"
+	"github.com/gookit/goutil/sysutil"
 	"github.com/inherelab/goenv"
 )
 
-// EnvManager struct
-type EnvManager struct {
-	adaptor string
-}
-
-// NewEnvManager instance
-func NewEnvManager(adaptor string) *EnvManager {
-	return &EnvManager{
-		adaptor: adaptor,
-	}
-}
-
 // MakeAdaptor instance
-func (m *EnvManager) MakeAdaptor() (Adaptor, error) {
-	switch m.adaptor {
+func MakeAdaptor(adaptor string) (Adaptor, error) {
+	switch autoSelectAdaptor(adaptor) {
 	case goenv.ModeBrew:
 		return NewBrewAdaptor(), nil
 	case goenv.ModeGoEnv:
 		return &GoEnvAdaptor{}, nil
 	default:
-		return nil, errorx.Rawf("unsupported adaptor %q", m.adaptor)
+		return nil, errorx.Rawf("unsupported adaptor %q", adaptor)
 	}
+}
+
+func autoSelectAdaptor(name string) string {
+	if name != goenv.ModeAuto {
+		return name
+	}
+
+	if sysutil.IsWindows() {
+		if sysutil.HasExecutable(goenv.ModeScoop) {
+			return goenv.ModeScoop
+		}
+		return goenv.ModeGoEnv
+	}
+
+	if sysutil.HasExecutable(goenv.ModeBrew) {
+		return goenv.ModeBrew
+	}
+	return goenv.ModeGoEnv
 }
 
 // CallOpts struct

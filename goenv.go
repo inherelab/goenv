@@ -9,11 +9,6 @@ import (
 	"github.com/gookit/goutil/sysutil"
 )
 
-const (
-	ModeGoEnv = "goenv"
-	ModeBrew  = "brew"
-)
-
 var defaultFile = "~/.config/goenv/goenv.yml"
 var ConfFile = envutil.Getenv("GOENV_CONF_FILE", defaultFile)
 var Version = "0.0.1"
@@ -22,32 +17,6 @@ var CfgMgr *config.Config
 
 // Cfg for the application
 var Cfg = &appConf{}
-
-// appConf struct
-type appConf struct {
-	// ConfFile path
-	ConfFile string
-
-	// Mode allow: goenv, brew
-	Mode string `json:"mode" default:"goenv"`
-	// BrewLibDir path
-	BrewLibDir string `json:"brew_lib_dir" default:"/usr/local/opt"`
-
-	// DlHost address, on use mode=goenv
-	DlHost string `json:"dl_host" default:"https://golang.org/dl"`
-	// InstallDir the go install dir.
-	InstallDir string `json:"install_dir" default:"/usr/local/go"`
-}
-
-// IsBrewMode check
-func (c *appConf) IsBrewMode() bool {
-	return c.Mode == ModeBrew
-}
-
-// IsGoEnvMode check
-func (c *appConf) IsGoEnvMode() bool {
-	return c.Mode == ModeGoEnv
-}
 
 // Init config and more
 func Init() error {

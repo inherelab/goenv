@@ -10,7 +10,7 @@ Go multi version env manager
 
 - features TODO
 
-> **[EN README](README.md)**
+> **[中文说明](README.zh-CN.md)**
 
 ## Install
 
@@ -57,3 +57,14 @@ go run ./cmd/goenv
 ```bash
 go install ./cmd/goenv
 ```
+
+## Base on
+
+- https://github/gookit/color
+- https://github/gookit/config
+- https://github/gookit/gcli
+- https://github/gookit/goutil
+
+## LICENSE
+
+[MIT](LICENSE)
