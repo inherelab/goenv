@@ -1,14 +1,16 @@
 # GoEnv
 
-![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/gookit/gcli?style=flat-square)
-[![Unit-Tests](https://github.com/gookit/gcli/actions/workflows/go.yml/badge.svg)](https://github.com/gookit/gcli/actions/workflows/go.yml)
-[![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/gookit/gcli)](https://github.com/gookit/gcli)
-[![GoDoc](https://godoc.org/github.com/gookit/gcli?status.svg)](https://pkg.go.dev/github.com/gookit/gcli/v3)
-[![Go Report Card](https://goreportcard.com/badge/github.com/gookit/gcli)](https://goreportcard.com/report/github.com/gookit/gcli)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/inherelab/goenv?style=flat-square)
+[![Unit-Tests](https://github.com/inherelab/goenv/actions/workflows/go.yml/badge.svg)](https://github.com/inherelab/goenv/actions/workflows/go.yml)
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/inherelab/goenv)](https://github.com/inherelab/goenv)
+[![GoDoc](https://godoc.org/github.com/inherelab/goenv?status.svg)](https://pkg.go.dev/github.com/inherelab/goenv/v3)
+[![Go Report Card](https://goreportcard.com/badge/github.com/inherelab/goenv)](https://goreportcard.com/report/github.com/inherelab/goenv)
 
 Go multi version env manager
 
 - features TODO
+
+![goenv](_example/help.png)
 
 > **[中文说明](README.zh-CN.md)**
 
@@ -26,7 +28,9 @@ go install github.com/inherelab/goenv/cmd/goenv
 goenv
 ```
 
-switch version:
+### Switch
+
+switch to another version
 
 ```shell
 goenv switch 1.16
@@ -35,6 +39,26 @@ Or:
 
 ```shell
 goenv use 1.16
+```
+
+### Install
+
+Install new version
+
+```shell
+goenv install 1.18
+```
+
+### Update
+
+```shell
+goenv update 1.18
+```
+
+### Uninstall
+
+```shell
+goenv uninstall 1.18
 ```
 
 ## Development
@@ -60,10 +84,10 @@ go install ./cmd/goenv
 
 ## Base on
 
-- https://github/gookit/color
-- https://github/gookit/config
-- https://github/gookit/gcli
-- https://github/gookit/goutil
+- https://github.com/gookit/color
+- https://github.com/gookit/config
+- https://github.com/gookit/gcli
+- https://github.com/gookit/goutil
 
 ## LICENSE
 

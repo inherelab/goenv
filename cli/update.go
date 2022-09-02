@@ -13,7 +13,7 @@ var upOpts = struct {
 // UpdateCmd define
 var UpdateCmd = &gcli.Command{
 	Name:    "update",
-	Desc:    "update current Go version",
+	Desc:    "update input Go version",
 	Aliases: []string{"u", "up"},
 	Config: func(c *gcli.Command) {
 		c.StrOpt(&upOpts.dlHost, "dl-host", "dl", "", "custom download host, default use config")

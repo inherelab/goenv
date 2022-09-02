@@ -56,7 +56,7 @@ func createApp() {
 func addCommands() {
 	App.Add(
 		InfoCmd,
-		ShellCmd,
+		// ShellCmd,
 		UpdateCmd,
 		InstallCmd,
 		UninstallCmd,

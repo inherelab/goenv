@@ -14,7 +14,7 @@ var switchOpts = struct {
 // SwitchCmd define
 var SwitchCmd = &gcli.Command{
 	Name:     "switch",
-	Desc:     "switch current Go to given version",
+	Desc:     "switch Go to input version",
 	Examples: `${binWithCmd} 1.16`,
 	Aliases:  []string{"use"},
 	Config: func(c *gcli.Command) {

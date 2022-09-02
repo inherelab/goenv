@@ -13,7 +13,7 @@ var insOpts = struct {
 // InstallCmd define
 var InstallCmd = &gcli.Command{
 	Name:    "install",
-	Desc:    "install current Go version",
+	Desc:    "install new Go version",
 	Aliases: []string{"i", "ins"},
 	Config: func(c *gcli.Command) {
 		c.StrOpt(&insOpts.dlHost, "dl-host", "dl", "", "custom download host, default use config")

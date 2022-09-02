@@ -11,6 +11,7 @@ import (
 	"github.com/gookit/goutil/errorx"
 	"github.com/gookit/goutil/fsutil"
 	"github.com/gookit/goutil/sysutil"
+	"github.com/gookit/goutil/sysutil/cmdr"
 )
 
 // BrewAdaptor struct
