@@ -6,7 +6,7 @@ var defConf = `#
 #
 
 # mode allow: auto, goenv, brew
-mode: brew
+mode: auto
 
 # on use brew mode
 brew_lib_dir: /usr/local/opt

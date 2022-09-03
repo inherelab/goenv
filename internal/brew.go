@@ -12,6 +12,7 @@ import (
 	"github.com/gookit/goutil/fsutil"
 	"github.com/gookit/goutil/sysutil"
 	"github.com/gookit/goutil/sysutil/cmdr"
+	"github.com/inherelab/goenv"
 )
 
 // BrewAdaptor struct
@@ -19,6 +20,12 @@ type BrewAdaptor struct {
 	opts *CallOpts
 }
 
+// Name of adaptor
+func (a *BrewAdaptor) Name() string {
+	return goenv.ModeBrew
+}
+
+// NewBrewAdaptor instance
 func NewBrewAdaptor() *BrewAdaptor {
 	return &BrewAdaptor{
 		opts: newDefaultBrewOpts(),
@@ -31,10 +38,9 @@ func newDefaultBrewOpts() *CallOpts {
 	}
 }
 
-// WithOptions data
-func (a *BrewAdaptor) WithOptions(opts *CallOpts) Adaptor {
-	a.opts = opts
-	return a
+// ApplyOpFunc handle
+func (a *BrewAdaptor) ApplyOpFunc(fn OpFunc) {
+	fn(a.opts)
 }
 
 // List installed version

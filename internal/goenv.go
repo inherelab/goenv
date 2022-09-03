@@ -9,6 +9,7 @@ import (
 	"github.com/gookit/goutil/cliutil"
 	"github.com/gookit/goutil/errorx"
 	"github.com/gookit/goutil/sysutil"
+	"github.com/inherelab/goenv"
 )
 
 // GoEnvAdaptor struct
@@ -16,17 +17,27 @@ type GoEnvAdaptor struct {
 	opts *CallOpts
 }
 
-func (a *GoEnvAdaptor) ensureOpts() {
-	if a.opts == nil {
-		a.opts = &CallOpts{
-			LibDir: "/usr/local/go",
-		}
+// NewGoEnvAdaptor instance
+func NewGoEnvAdaptor() *GoEnvAdaptor {
+	return &GoEnvAdaptor{
+		opts: newDefaultGoEnvOpts(),
 	}
 }
 
-func (a *GoEnvAdaptor) WithOptions(opts *CallOpts) Adaptor {
-	a.opts = opts
-	return a
+func newDefaultGoEnvOpts() *CallOpts {
+	return &CallOpts{
+		LibDir: "/usr/local/go",
+	}
+}
+
+// Name of adaptor
+func (a *GoEnvAdaptor) Name() string {
+	return goenv.ModeGoEnv
+}
+
+// ApplyOpFunc handle
+func (a *GoEnvAdaptor) ApplyOpFunc(fn OpFunc) {
+	fn(a.opts)
 }
 
 func (a *GoEnvAdaptor) List() error {

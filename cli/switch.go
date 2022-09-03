@@ -31,10 +31,9 @@ var SwitchCmd = &gcli.Command{
 			return err
 		}
 
-		opts := &internal.CallOpts{
-			Yes: switchOpts.yes,
-		}
-
-		return adaptor.WithOptions(opts).Switch(ver)
+		adaptor.ApplyOpFunc(func(opts *internal.CallOpts) {
+			opts.Yes = switchOpts.yes
+		})
+		return adaptor.Switch(ver)
 	},
 }

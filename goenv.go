@@ -33,17 +33,9 @@ func Init() error {
 }
 
 func loadConfig() error {
-	realPath := sysutil.ExpandPath(ConfFile)
-	if !fsutil.IsFile(realPath) {
-		cliutil.Infoln("TIP: goenv config file not found, will init a default")
-
-		realPath = sysutil.ExpandPath(defaultFile)
-		_, err := fsutil.PutContents(realPath, defConf, fsutil.FsCWTFlags)
-		if err != nil {
-			return err
-		}
-
-		cliutil.Infoln("OK, init default config at: ", defaultFile)
+	realPath, err := InitConfigFile(false)
+	if err != nil {
+		return err
 	}
 
 	CfgMgr = config.NewWithOptions("goenv",
@@ -54,4 +46,25 @@ func loadConfig() error {
 
 	// cliutil.Infoln("load goenv config from", realPath)
 	return CfgMgr.LoadFiles(realPath)
+}
+
+func InitConfigFile(reinstall bool) (string, error) {
+	realPath := sysutil.ExpandPath(ConfFile)
+	if !reinstall && fsutil.IsFile(realPath) {
+		return realPath, nil
+	}
+
+	if reinstall {
+		cliutil.Magentaln("TIP: Reinstall the default config contents to config file")
+	} else {
+		cliutil.Infoln("TIP: config file not found, will init default contents")
+	}
+
+	_, err := fsutil.PutContents(realPath, defConf, fsutil.FsCWTFlags)
+	if err != nil {
+		return "", err
+	}
+
+	cliutil.Infoln("OK, init default config at:", ConfFile)
+	return realPath, nil
 }

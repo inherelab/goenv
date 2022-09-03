@@ -9,30 +9,39 @@ import (
 )
 
 var infoOpts = struct {
-	All bool
+	All  bool
+	Init bool // init goenv config
 }{}
 
 // InfoCmd define
 var InfoCmd = &gcli.Command{
-	Name: "info",
-	Desc: "display some information",
-	// Aliases: []string{"use"},
+	Name:    "info",
+	Desc:    "display some information",
+	Aliases: []string{"show"},
 	Config: func(c *gcli.Command) {
 		c.BoolOpt(&infoOpts.All, "all", "", false, "display all loaded config data")
+		c.BoolOpt(&infoOpts.Init, "init", "", false, "re-init goenv config to user config dir")
 	},
 	Func: func(c *gcli.Command, args []string) error {
-		color.Infoln("Go Info:")
+		if infoOpts.Init {
+			_, err := goenv.InitConfigFile(true)
+			return err
+		}
+
+		color.Magentaln("Goenv Information")
+
+		color.Infop("\nGo Info: ")
 		info, err := sysutil.OsGoInfo()
 		if err != nil {
 			return err
 		}
 		dump.NoLoc(info)
 
-		color.Infoln("App Config:")
+		color.Infop("\nApp Config: ")
 		dump.NoLoc(goenv.Cfg)
 
 		if infoOpts.All {
-			color.Infoln("All Config:")
+			color.Infop("\nAll Config: ")
 			dump.NoLoc(goenv.CfgMgr.Data())
 		}
 		return nil

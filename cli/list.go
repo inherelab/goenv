@@ -18,6 +18,7 @@ var ListCmd = &gcli.Command{
 			return err
 		}
 
+		// cliutil.Infoln("Current adaptor is:", adaptor.Name())
 		return adaptor.List()
 	},
 }
