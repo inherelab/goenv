@@ -16,6 +16,15 @@ Go multi version env manager
 
 ## Install
 
+**Curl install**
+
+```shell
+curl https://github.com/inherelab/goenv/releases/latest/download/goenv-linux-amd64 -L -o /usr/local/bin/goenv
+chmod a+x /usr/local/bin/goenv
+```
+
+> TIPs: notice replace the OS and arch on `goenv-linux-amd64`
+
 **Use go install**
 
 ```shell
