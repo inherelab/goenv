@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"strings"
-
 	"github.com/gookit/gcli/v3"
 )
 
@@ -16,7 +14,10 @@ var UninstallCmd = &gcli.Command{
 	},
 	Func: func(c *gcli.Command, args []string) error {
 		ver := c.Arg("version").String()
-		ver = strings.TrimPrefix(ver, "go")
+		ver, err := checkFormatVersion(ver)
+		if err != nil {
+			return err
+		}
 
 		adaptor, err := makeAdaptor()
 		if err != nil {

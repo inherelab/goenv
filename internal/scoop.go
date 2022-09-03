@@ -9,18 +9,17 @@ import (
 	"github.com/gookit/goutil/cliutil"
 	"github.com/gookit/goutil/errorx"
 	"github.com/gookit/goutil/sysutil"
-	"github.com/inherelab/goenv"
 )
 
 // ScoopAdaptor struct
 type ScoopAdaptor struct {
-	opts *CallOpts
+	baseAdaptor
 }
 
 // NewScoopAdaptor instance
 func NewScoopAdaptor() *ScoopAdaptor {
 	return &ScoopAdaptor{
-		opts: newDefaultScoopOpts(),
+		baseAdaptor: newBaseAdaptor(AdaptorScoop, newDefaultScoopOpts()),
 	}
 }
 
@@ -28,16 +27,6 @@ func newDefaultScoopOpts() *CallOpts {
 	return &CallOpts{
 		LibDir: "/usr/local/go",
 	}
-}
-
-// Name of adaptor
-func (a *ScoopAdaptor) Name() string {
-	return goenv.ModeScoop
-}
-
-// ApplyOpFunc handle
-func (a *ScoopAdaptor) ApplyOpFunc(fn OpFunc) {
-	fn(a.opts)
 }
 
 func (a *ScoopAdaptor) List() error {

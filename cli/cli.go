@@ -1,8 +1,12 @@
 package cli
 
 import (
+	"strings"
+
 	"github.com/gookit/gcli/v3"
 	"github.com/gookit/goutil/cliutil"
+	"github.com/gookit/goutil/errorx"
+	"github.com/gookit/goutil/strutil"
 	"github.com/inherelab/goenv"
 	"github.com/inherelab/goenv/internal"
 )
@@ -67,5 +71,14 @@ func addCommands() {
 
 // MakeAdaptor instance
 func makeAdaptor() (internal.Adaptor, error) {
-	return internal.MakeAdaptor(goenv.Cfg.Mode)
+	return internal.MakeAdaptor(goenv.Cfg.Adaptor)
+}
+
+func checkFormatVersion(ver string) (string, error) {
+	ver = strings.TrimPrefix(ver, "go")
+
+	if !strutil.IsVersion(ver) {
+		return "", errorx.Rawf("invalid version string: %s", ver)
+	}
+	return ver, nil
 }

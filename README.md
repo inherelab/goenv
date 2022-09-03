@@ -33,13 +33,15 @@ go install github.com/inherelab/goenv/cmd/goenv
 
 ## Usage
 
+Run goenv for see available commands
+
 ```shell
 goenv
 ```
 
 ### Switch
 
-switch to another version
+Switch Go to another version
 
 ```shell
 goenv switch 1.16
@@ -49,6 +51,10 @@ Or:
 ```shell
 goenv use 1.16
 ```
+
+**preview**(on MacOS)
+
+![](_example/switch.png)
 
 ### Install
 
@@ -68,6 +74,20 @@ goenv update 1.18
 
 ```shell
 goenv uninstall 1.18
+```
+
+### Info
+
+```shell
+goenv info
+```
+
+### List
+
+```shell
+goenv list
+# or
+goenv ls
 ```
 
 ## Development

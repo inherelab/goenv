@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"strings"
-
 	"github.com/gookit/gcli/v3"
 	"github.com/inherelab/goenv/internal"
 )
@@ -24,7 +22,10 @@ var SwitchCmd = &gcli.Command{
 	},
 	Func: func(c *gcli.Command, args []string) error {
 		ver := c.Arg("version").String()
-		ver = strings.TrimPrefix(ver, "go")
+		ver, err := checkFormatVersion(ver)
+		if err != nil {
+			return err
+		}
 
 		adaptor, err := makeAdaptor()
 		if err != nil {

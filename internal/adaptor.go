@@ -4,10 +4,9 @@ import (
 	"github.com/gookit/goutil/cliutil"
 	"github.com/gookit/goutil/errorx"
 	"github.com/gookit/goutil/sysutil"
-	"github.com/inherelab/goenv"
 )
 
-// Adaptor consts
+// Adaptor name consts
 const (
 	AdaptorAuto  = "auto"
 	AdaptorGoEnv = "goenv"
@@ -18,6 +17,10 @@ const (
 type baseAdaptor struct {
 	name string
 	opts *CallOpts
+}
+
+func newBaseAdaptor(name string, opts *CallOpts) baseAdaptor {
+	return baseAdaptor{name: name, opts: opts}
 }
 
 // ApplyOpFunc handle
@@ -54,17 +57,17 @@ type Adaptor interface {
 
 // MakeAdaptor instance
 func MakeAdaptor(adaptor string) (Adaptor, error) {
-	if adaptor == goenv.ModeAuto {
+	if adaptor == AdaptorAuto {
 		adaptor = autoSelectAdaptor(adaptor)
-		cliutil.Cyanln("auto select adaptor:", adaptor)
+		cliutil.Cyanln("TIP: auto select a adaptor:", adaptor)
 	}
 
 	switch adaptor {
-	case goenv.ModeBrew:
+	case AdaptorBrew:
 		return NewBrewAdaptor(), nil
-	case goenv.ModeScoop:
+	case AdaptorScoop:
 		return NewScoopAdaptor(), nil
-	case goenv.ModeGoEnv:
+	case AdaptorGoEnv:
 		return NewGoEnvAdaptor(), nil
 	default:
 		return nil, errorx.Rawf("unsupported adaptor %q", adaptor)
@@ -74,14 +77,14 @@ func MakeAdaptor(adaptor string) (Adaptor, error) {
 func autoSelectAdaptor(name string) string {
 	// is Windows
 	if sysutil.IsWindows() {
-		if sysutil.HasExecutable(goenv.ModeScoop) {
-			return goenv.ModeScoop
+		if sysutil.HasExecutable(AdaptorScoop) {
+			return AdaptorScoop
 		}
-		return goenv.ModeGoEnv
+		return AdaptorGoEnv
 	}
 
-	if sysutil.HasExecutable(goenv.ModeBrew) {
-		return goenv.ModeBrew
+	if sysutil.HasExecutable(AdaptorBrew) {
+		return AdaptorBrew
 	}
-	return goenv.ModeGoEnv
+	return AdaptorGoEnv
 }

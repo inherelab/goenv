@@ -12,23 +12,17 @@ import (
 	"github.com/gookit/goutil/fsutil"
 	"github.com/gookit/goutil/sysutil"
 	"github.com/gookit/goutil/sysutil/cmdr"
-	"github.com/inherelab/goenv"
 )
 
 // BrewAdaptor struct
 type BrewAdaptor struct {
-	opts *CallOpts
-}
-
-// Name of adaptor
-func (a *BrewAdaptor) Name() string {
-	return goenv.ModeBrew
+	baseAdaptor
 }
 
 // NewBrewAdaptor instance
 func NewBrewAdaptor() *BrewAdaptor {
 	return &BrewAdaptor{
-		opts: newDefaultBrewOpts(),
+		baseAdaptor: newBaseAdaptor(AdaptorBrew, newDefaultBrewOpts()),
 	}
 }
 
@@ -38,11 +32,6 @@ func newDefaultBrewOpts() *CallOpts {
 	}
 }
 
-// ApplyOpFunc handle
-func (a *BrewAdaptor) ApplyOpFunc(fn OpFunc) {
-	fn(a.opts)
-}
-
 // List installed version
 func (a *BrewAdaptor) List() error {
 	info, err := sysutil.OsGoInfo()
@@ -50,14 +39,16 @@ func (a *BrewAdaptor) List() error {
 		return err
 	}
 
-	str, err := sysutil.ShellExec("ls /usr/local/opt | grep go@")
+	prefix := "go@"
+	cmdline := fmt.Sprintf("ls %s | grep %s", a.opts.LibDir, prefix)
+	fmt.Println("Find local Go version at", a.opts.LibDir)
+
+	str, err := sysutil.ShellExec(cmdline)
 	if err != nil {
 		return errorx.Wrap(err, "find local go error")
 	}
 
 	lines := strings.Split(strings.TrimSpace(str), "\n")
-
-	prefix := "go@"
 	versions := arrutil.StringsMap(lines, func(s string) string {
 		ver := strings.TrimPrefix(s, prefix)
 
@@ -75,7 +66,7 @@ func (a *BrewAdaptor) List() error {
 
 func (a *BrewAdaptor) fmtVerAndLibPath(ver string) (string, string) {
 	// 1.16.5 -> 1.16
-	ver = formatVersion(ver)
+	ver = formatBrewVersion(ver)
 
 	return ver, "/usr/local/opt/go@" + ver
 }
@@ -88,7 +79,7 @@ func (a *BrewAdaptor) Switch(ver string) error {
 			return a.Install(ver)
 		}
 
-		return errorx.Rawf("not found Go %s on %s", ver, "/usr/local/opt")
+		return errorx.Rawf("not found Go %s on %s", ver, a.opts.LibDir)
 	}
 
 	info, err := sysutil.OsGoInfo()
@@ -96,7 +87,7 @@ func (a *BrewAdaptor) Switch(ver string) error {
 		return err
 	}
 
-	old := formatVersion(info.Version)
+	old := formatBrewVersion(info.Version)
 	if old == ver {
 		return errorx.Rawf("The current Go version is already %s", ver)
 	}
@@ -114,6 +105,7 @@ func (a *BrewAdaptor) Switch(ver string) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println()
 
 	// "brew link go@" + ver
 	cmdArgs = arrutil.Strings{"brew", "link", "go@" + ver}
@@ -123,7 +115,8 @@ func (a *BrewAdaptor) Switch(ver string) error {
 		return err
 	}
 
-	cliutil.Infoln("Switch successful!")
+	cliutil.Infoln("\nSwitch successful!")
+	fmt.Print("Current: ")
 	return sysutil.NewCmd("go", "version").FlushRun()
 }
 
@@ -149,7 +142,7 @@ func (a *BrewAdaptor) Install(ver string) error {
 func (a *BrewAdaptor) Update(ver string) error {
 	ver, insPath := a.fmtVerAndLibPath(ver)
 	if !fsutil.PathExists(insPath) {
-		cliutil.Infoln("TIP: the go", ver, "not found, will be install")
+		cliutil.Infoln("TIP: the go", ver, "not found, will be install now")
 		return a.Install(ver)
 	}
 
@@ -157,12 +150,11 @@ func (a *BrewAdaptor) Update(ver string) error {
 
 	c := sysutil.NewCmd("brew", "upgrade")
 	c.WithArgf("go@%s", ver)
-	c.OutputToStd()
 	c.RunBefore = func(c *cmdr.Cmd) {
 		cliutil.Yellowln(">", c.Cmdline())
 	}
 
-	return c.Run()
+	return c.FlushRun()
 }
 
 // Uninstall go by given version
@@ -176,15 +168,14 @@ func (a *BrewAdaptor) Uninstall(ver string) error {
 
 	c := sysutil.NewCmd("brew", "uninstall")
 	c.WithArgf("go@%s", ver)
-	c.OutputToStd()
 	c.RunBefore = func(c *cmdr.Cmd) {
 		cliutil.Yellowln(">", c.Cmdline())
 	}
 
-	return c.Run()
+	return c.FlushRun()
 }
 
-func formatVersion(ver string) string {
+func formatBrewVersion(ver string) string {
 	// 1.16.5 -> 1.16
 	ss := strings.Split(ver, ".")
 	if len(ss) > 2 {

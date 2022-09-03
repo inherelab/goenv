@@ -5,8 +5,9 @@ var defConf = `#
 # author: https://github.com/inhere
 #
 
-# mode allow: auto, goenv, brew
-mode: auto
+# select adaptor name.
+# allow: auto, goenv, brew
+adaptor: auto
 
 # on use brew mode
 brew_lib_dir: /usr/local/opt
@@ -27,36 +28,18 @@ current:
 
 `
 
-// mode consts
-const (
-	ModeAuto  = "auto"
-	ModeGoEnv = "goenv"
-	ModeBrew  = "brew"
-	ModeScoop = "scoop"
-)
-
 // appConf struct
 type appConf struct {
+	// Adaptor name. allow: auto, goenv, brew, scoop
+	Adaptor string `json:"adaptor" default:"auto"`
 	// ConfFile path
-	ConfFile string
+	ConfFile string `json:"conf_file"`
 
-	// Mode allow: auto, goenv, brew
-	Mode string `json:"mode" default:"auto"`
-	// BrewLibDir path
+	// BrewLibDir path, on use adaptor=brew
 	BrewLibDir string `json:"brew_lib_dir" default:"/usr/local/opt"`
 
-	// DlHost address, on use mode=goenv
+	// DlHost address, on use adaptor=goenv
 	DlHost string `json:"dl_host" default:"https://golang.org/dl"`
 	// InstallDir the go install dir.
 	InstallDir string `json:"install_dir" default:"/usr/local/go"`
-}
-
-// IsBrewMode check
-func (c *appConf) IsBrewMode() bool {
-	return c.Mode == ModeBrew
-}
-
-// IsGoEnvMode check
-func (c *appConf) IsGoEnvMode() bool {
-	return c.Mode == ModeGoEnv
 }

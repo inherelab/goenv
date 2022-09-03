@@ -39,7 +39,7 @@ goenv
 
 ### Switch
 
-Switch to a exists version
+Switch Go to an exists version
 
 ```shell
 goenv switch 1.16
@@ -49,6 +49,10 @@ Or:
 ```shell
 goenv use 1.16
 ```
+
+**preview**(on MacOS)
+
+![](_example/switch.png)
 
 ### Install
 
@@ -68,6 +72,20 @@ goenv update 1.18
 
 ```shell
 goenv uninstall 1.18
+```
+
+### Info
+
+```shell
+goenv info
+```
+
+### List
+
+```shell
+goenv list
+# or
+goenv ls
 ```
 
 ## Development
