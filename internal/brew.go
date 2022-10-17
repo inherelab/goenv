@@ -116,7 +116,7 @@ func (a *BrewAdaptor) Switch(ver string) error {
 	}
 
 	cliutil.Infoln("\nSwitch successful!")
-	fmt.Print("Current: ")
+	color.Bold.Print("Current: ")
 	return sysutil.NewCmd("go", "version").FlushRun()
 }
 

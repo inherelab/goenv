@@ -31,7 +31,7 @@ help:
 
 ##Available Commands:
 
-ins2bin: ## Install to GOPATH/bin
+install: ## Install to GOPATH/bin
 	go build $(BUILD_FLAGS) -o $(GOPATH)/bin/goenv $(MAIN_SRC_FILE)
 	chmod +x $(GOPATH)/bin/goenv
 

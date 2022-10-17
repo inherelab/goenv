@@ -6,7 +6,7 @@ import (
 	"github.com/gookit/goutil/sysutil"
 )
 
-// Adaptor name consts
+// Adaptor name consts: scoop, winget
 const (
 	AdaptorAuto  = "auto"
 	AdaptorGoEnv = "goenv"
@@ -53,6 +53,7 @@ type Adaptor interface {
 	Install(ver string) error
 	Update(ver string) error
 	Uninstall(ver string) error
+	// Available() error // TODO check available
 }
 
 // MakeAdaptor instance
@@ -69,6 +70,8 @@ func MakeAdaptor(adaptor string) (Adaptor, error) {
 		return NewScoopAdaptor(), nil
 	case AdaptorGoEnv:
 		return NewGoEnvAdaptor(), nil
+	case "winget":
+		return NewStdAdaptor(adaptor), nil
 	default:
 		return nil, errorx.Rawf("unsupported adaptor %q", adaptor)
 	}

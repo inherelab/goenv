@@ -3,7 +3,7 @@
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/inherelab/goenv?style=flat-square)
 [![Unit-Tests](https://github.com/inherelab/goenv/actions/workflows/go.yml/badge.svg)](https://github.com/inherelab/goenv/actions/workflows/go.yml)
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/inherelab/goenv)](https://github.com/inherelab/goenv)
-[![GoDoc](https://godoc.org/github.com/inherelab/goenv?status.svg)](https://pkg.go.dev/github.com/inherelab/goenv/v3)
+[![Go Reference](https://pkg.go.dev/badge/github.com/gookit/goutil.svg)](https://pkg.go.dev/github.com/gookit/goutil)
 [![Go Report Card](https://goreportcard.com/badge/github.com/inherelab/goenv)](https://goreportcard.com/report/github.com/inherelab/goenv)
 
 Go multi version env manager
