@@ -131,7 +131,7 @@ func (a *BrewAdaptor) Install(ver string) error {
 
 	c := sysutil.NewCmd("brew", "install")
 	c.WithArgf("go@%s", ver)
-	c.RunBefore = func(c *cmdr.Cmd) {
+	c.BeforeRun = func(c *cmdr.Cmd) {
 		cliutil.Yellowln(">", c.Cmdline())
 	}
 
@@ -150,7 +150,7 @@ func (a *BrewAdaptor) Update(ver string) error {
 
 	c := sysutil.NewCmd("brew", "upgrade")
 	c.WithArgf("go@%s", ver)
-	c.RunBefore = func(c *cmdr.Cmd) {
+	c.BeforeRun = func(c *cmdr.Cmd) {
 		cliutil.Yellowln(">", c.Cmdline())
 	}
 
@@ -168,7 +168,7 @@ func (a *BrewAdaptor) Uninstall(ver string) error {
 
 	c := sysutil.NewCmd("brew", "uninstall")
 	c.WithArgf("go@%s", ver)
-	c.RunBefore = func(c *cmdr.Cmd) {
+	c.BeforeRun = func(c *cmdr.Cmd) {
 		cliutil.Yellowln(">", c.Cmdline())
 	}
 
