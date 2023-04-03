@@ -6,7 +6,7 @@ require (
 	github.com/gookit/color v1.5.3
 	github.com/gookit/config/v2 v2.2.1
 	github.com/gookit/gcli/v3 v3.2.1
-	github.com/gookit/goutil v0.6.7
+	github.com/gookit/goutil v0.6.8
 )
 
 require (
